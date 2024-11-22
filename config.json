@@ -1,0 +1,20 @@
+{
+  "port": 8080,
+  "signal-server": "http://127.0.0.1:3005",
+  "bybit": {
+    "apiKey": "",
+    "secret": "",
+    "demo": true
+  },
+  "mexc": {
+    "apiKey": "",
+    "secret": "",
+    "demo": true
+  },
+  "okx": {
+    "apiKey": "",
+    "secret": "",
+    "password": "",
+    "demo": true
+  }
+}
