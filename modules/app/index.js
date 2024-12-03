@@ -37,13 +37,6 @@ export const watchTower = async (id, wss) => {
       const positions = await exchange.watchMyTrades(),
         newPosition = _.last(positions);
 
-      const orders = await exchange.watchOrders(),
-        lastOrder = _.last(orders);
-
-      console.log("New Trade: ", newPosition);
-
-      console.log("New Order: ", lastOrder);
-
       if (newPosition) {
         const newBalance = await exchange.fetchBalance();
 
