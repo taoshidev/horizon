@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import config from "../../config.json" assert { type: "json" };
+import { loadEnvironment } from "../environment-loader/index.js";
 
 import { toSignal } from "../order/toSignal.js";
 
@@ -12,6 +12,7 @@ import { broadcast } from "../websocket/broadcast.js";
 import { send } from "../order/send.js";
 
 export const watchTower = async (id, wss) => {
+  const config = loadEnvironment();
   let exchange = await initializeExchange(id, config[id]);
 
   if (!exchange) return null;
@@ -33,19 +34,27 @@ export const watchTower = async (id, wss) => {
 
   while (true) {
     try {
-      const order = await exchange.watchOrders();
-      const recentOrder = _.last(order);
+      const positions = await exchange.watchMyTrades(),
+        newPosition = _.last(positions);
 
-      if (isFilled(recentOrder)) {
+      const orders = await exchange.watchOrders(),
+        lastOrder = _.last(orders);
+
+      console.log("New Trade: ", newPosition);
+
+      console.log("New Order: ", lastOrder);
+
+      if (newPosition) {
         const newBalance = await exchange.fetchBalance();
 
         const signal = toSignal({
-          id,
-          order: recentOrder,
-          balance: newBalance,
-        });
+            id,
+            order: newPosition,
+            balance: newBalance,
+          }
+        );
 
-        const response = await send(signal);
+        const response = await send(signal, config);
         console.info(
           `${signal.trade_pair.trade_pair_id}:${signal.order_type} sent to PTN`,
         );
@@ -55,6 +64,7 @@ export const watchTower = async (id, wss) => {
       }
     } catch (error) {
       console.error("Error watching orders:", error);
+      throw error;
     }
   }
 };

@@ -1,7 +1,5 @@
-import config from "../../config.json" assert { type: "json" };
-
-export async function send(signal) {
-  const data = { ...signal, api_key: "xxxx" };
+export async function send(signal, config) {
+  const data = { ...signal, api_key: config.ptn_api_key};
 
   try {
     const response = await fetch(

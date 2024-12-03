@@ -5,6 +5,8 @@ export function calculateLeverage(order, balance) {
 
 	const openPositionValueUSD = Object.values(balance.used).reduce((acc, value) => acc + value, 0);
 
+	const accountLeverage = currentOrderValue / (openPositionValueUSD + accountBalanceUSD + currentOrderValue);
+
 	// return leverage
-	return currentOrderValue / (openPositionValueUSD + accountBalanceUSD + currentOrderValue);
+	return accountLeverage >= 0.01 ? accountLeverage : 0.01;
 }

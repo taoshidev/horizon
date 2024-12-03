@@ -6,8 +6,8 @@ export async function initializeExchange(id, config) {
   const { apiKey, secret, password, demo } = config;
 
   if (!apiKey || !secret) {
-    console.error("API key or secret is missing.");
-    return null;
+    throw new Error("API key or secret is missing.");
+
   }
 
   const exchangeConfigModule = getExchangeConfigModule(id);
@@ -17,7 +17,7 @@ export async function initializeExchange(id, config) {
     secret,
     ...(password && { password }),
     ...(exchangeConfigModule?.getOptions && {
-      options: exchangeConfigModule.getOptions(),
+      options: Object.assign(exchangeConfigModule.getOptions(), {'defaultType': 'future'})
     }),
   };
 
@@ -28,6 +28,6 @@ export async function initializeExchange(id, config) {
   }
 
   exchange.enableRateLimit = true;
-
+  
   return exchange;
 }

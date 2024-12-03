@@ -43,6 +43,6 @@ const options = program.opts();
       );
     }
   } catch (error) {
-    console.warn("Error starting Order Watcher");
+    console.error("Error starting Order Watcher: ", error);
   }
 })();
