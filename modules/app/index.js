@@ -34,6 +34,11 @@ export const watchTower = async (id, wss) => {
 
   while (true) {
     try {
+      // const orders = await exchange.watchOrders(),
+      //   newOrder = _.last(orders);
+
+      // console.log("New Order Received: ", newOrder);
+
       const positions = await exchange.watchMyTrades(),
         newPosition = _.last(positions);
 
@@ -49,7 +54,7 @@ export const watchTower = async (id, wss) => {
 
         const response = await send(signal, config);
         console.info(
-          `${signal.trade_pair.trade_pair_id}:${signal.order_type} sent to PTN`,
+          `${_.get(signal, "trade_pair.trade_pair_id", "Unknown Pair")}:${signal.order_type} sent to PTN`,
         );
 
         userBalance(newBalance);
