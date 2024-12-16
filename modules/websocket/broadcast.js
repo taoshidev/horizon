@@ -1,3 +1,5 @@
+import { WebSocket } from "ws";
+
 export function broadcast(wss, message) {
   if (!wss) {
     console.error("WebSocket server is not initialized.");
