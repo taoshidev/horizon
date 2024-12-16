@@ -1,10 +1,14 @@
 import { JSONFilePreset } from "lowdb/node";
 
-import config from "../config.json" assert { type: "json" };
+import config from "config";
+import path from "path";
+
+const env = config.util.getEnv("NODE_ENV");
+const configPath = path.join("config", `${env}.json`);
 
 export const configRoutes = (router, wss) => {
   router.post("/save-config", async (req, res) => {
-    const db = await JSONFilePreset("config.json", config);
+    const db = await JSONFilePreset(configPath, config);
     const { exchange, apiKey, secret, demo } = req.body;
 
     if (!apiKey || !secret || !demo) {
@@ -31,7 +35,7 @@ export const configRoutes = (router, wss) => {
   });
 
   router.get("/get-config", async (req, res) => {
-    const db = await JSONFilePreset("config.json", config);
+    const db = await JSONFilePreset(configPath, config);
     const { exchange } = req.query;
 
     try {

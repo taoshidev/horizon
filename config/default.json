@@ -1,0 +1,10 @@
+{
+  "port": 8080,
+  "signal-server": "http://127.0.0.1:3005",
+  "bybit": {
+    "apiKey": "",
+    "secret": "",
+    "market": "",
+    "demo": true
+  }
+}
