@@ -16,6 +16,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@sentry/node": "^8.46.0",
+    "@sentry/profiling-node": "^8.46.0",
     "ccxt": "^4.4.30",
     "commander": "^12.1.0",
     "config": "^3.3.12",

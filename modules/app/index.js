@@ -1,5 +1,5 @@
 import _ from "lodash";
-
+import * as Sentry from "@sentry/node";
 import config from "config";
 
 import { toSignal } from "../order/toSignal.js";
@@ -19,7 +19,8 @@ export const watchTower = async (id, wss) => {
   try {
     await exchange.loadMarkets();
   } catch (error) {
-    console.log(error);
+    console.error("Error loading market:", error);
+    Sentry.captureException(error);
   }
 
   try {
@@ -30,9 +31,8 @@ export const watchTower = async (id, wss) => {
     console.info(`Watching orders for ${id}...`);
   } catch (error) {
     console.error("Error fetching balance:", error);
+    Sentry.captureException(error);
   }
-
-  console.log(config.get(id).market);
 
   while (true) {
     try {

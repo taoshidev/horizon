@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import config from "config";
 
 const signalServer = config.get("signal-server");
@@ -23,6 +24,8 @@ export async function send(signal) {
       error: !response.ok ? result.error || "Failed to send to PTN" : undefined,
     };
   } catch (error) {
+    Sentry.captureException(error);
+
     return {
       status: 500,
       message: "Failed to send to PTN",
