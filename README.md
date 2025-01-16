@@ -1,6 +1,8 @@
-![Screenshot](assets/oppenheimer.png)
+<p align="center">
+  <img src="assets/horizon.png" style="width: 30%; height: auto;">
+</p>
 
-Oppenheimer is a modular and extensible Node.js application that watches orders on multiple exchanges, processes them, and sends signals to [Proprietary Trading Network](https://github.com/taoshidev/proprietary-trading-network). 
+Horizon is a modular and extensible Node.js application that watches orders on multiple exchanges, processes them, and sends signals to [Proprietary Trading Network](https://github.com/taoshidev/proprietary-trading-network).
 It supports integration with popular exchanges like Bybit, OKX, and MEXC, leveraging the ccxt library for exchange interactions.
 
 
@@ -20,8 +22,8 @@ It supports integration with popular exchanges like Bybit, OKX, and MEXC, levera
 ### Steps
 1. Clone the repository
 ```bash
-git clone https://github.com/taoshidev/oppenheimer.git
-cd oppenheimer
+git clone https://github.com/taoshidev/horizon.git
+cd horizon
 ```
 
 2. Install dependencies:

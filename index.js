@@ -15,12 +15,12 @@ import { initializeRoutes } from "./routes/index.js";
 import { SupportedExchanges } from "./constants/index.js";
 
 const app = express();
+Sentry.setupExpressErrorHandler(app);
+
 const server = createServer(app);
 const wss = startWebSocket(server);
 const program = new Command();
 const port = config.get("port");
-
-Sentry.setupExpressErrorHandler(app);
 
 app.use(express.json());
 app.use("/api", initializeRoutes(wss));
