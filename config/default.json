@@ -2,9 +2,9 @@
   "port": 8080,
   "signal-server": "http://127.0.0.1:3005",
   "bybit": {
-    "apiKey": "",
-    "secret": "",
-    "market": "",
-    "demo": true
+    "apiKey": "S5UMbmf9fsXVsproIS",
+    "secret": "VFkSzJbIEILrTftXgun32P1A1cLaTW1ixmKZ",
+    "market": "future",
+    "demo": false
   }
 }

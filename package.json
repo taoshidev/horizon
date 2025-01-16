@@ -1,5 +1,5 @@
 {
-  "name": "oppenheimer",
+  "name": "horizon",
   "version": "0.1.0",
   "exports": "./index.js",
   "type": "module",
