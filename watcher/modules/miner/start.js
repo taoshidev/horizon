@@ -1,11 +1,19 @@
-export const startMiner = async (wss, { testnet, wallet, debug = true }) => {
+import config from "config";
+import { spawn } from "child_process";
+import path from "path";
+
+import { broadcast } from '../websocket/broadcast.js';
+
+const ptnPath = config.get("ptn-path");
+
+export const startMiner = async (wss, { testnet, wallet, debug = true, dashboard }) => {
   if (!testnet || !wallet) {
     throw new Error(
       "Missing required data: 'testnet' and 'wallet' are required.",
     );
   }
 
-  const scriptPath = path.resolve("../../neurons/miner.py");
+  const scriptPath = path.resolve(`${ptnPath}/neurons/miner.py`);
   const args = [
     `--netuid`,
     testnet ? 116 : 8,
@@ -14,10 +22,13 @@ export const startMiner = async (wss, { testnet, wallet, debug = true }) => {
     `--wallet.hotkey`,
     "default",
     `--subtensor.network`,
-    "test",
+    testnet ? "test" : "main",
   ];
 
   if (debug) args.push("--logging.debug");
+  if (dashboard) {
+    args.push("--start-dashboard");
+  }
 
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn("python3", [scriptPath, ...args]);

@@ -2,24 +2,61 @@
   <img src="assets/horizon.png" style="width: 30%; height: auto;">
 </p>
 
-Horizon is a modular and extensible Node.js application that watches orders on multiple exchanges, processes them, and sends signals to [Proprietary Trading Network](https://github.com/taoshidev/proprietary-trading-network).
-It supports integration with popular exchanges like Bybit, OKX, and MEXC, leveraging the ccxt library for exchange interactions.
-
+Horizon is a complete solution for managing PTN miners and exchange connectivity.
 
 ## Features
-- Modular Exchange Integration:
-  - Dynamically supports multiple exchanges using the ccxt library.
-  - Each exchange has its own configuration and logic for flexibility.
-- Signal Processing:
-  - Converts exchange orders and balances into PTN signal formats.
+
+### Order Watcher
+
+- Real-time order monitoring
+- Automated order-to-signal conversion
+- Dynamic leverage calculation
+- WebSocket status updates
+- Exchange sandbox/testnet support
+- Modular exchange integration
+
+
+### Easy Miner
+
+**Miner Management**
+- Start/stop miners
+- Real-time log viewing
+
+**Order Monitoring**
+
+- Live order feed
+- Status tracking
+- Error reporting
+
+Architecture
+
+```bash
+/
+├── watcher/                 # Exchange monitoring service
+│   ├── modules/
+│   │   ├── app/            # Core application logic
+│   │   ├── ccxt/           # Exchange integration
+│   │   ├── miner/          # Miner management
+│   │   ├── order/          # Order processing
+│   │   └── websocket/      # Real-time updates
+│   └── routes/             # API endpoints
+├── easy-miner/             # Web interface
+│   ├── app/                # Next.js application
+│   │   ├── actions/        # Server actions
+│   │   └── store/          # State management
+│   ├── components/         # UI components
+│   └── features/           # Feature modules
+└── config/                 # Configuration files
+```
+
+## Prerequisites
+- Node.js 20+
+- Python 3.8+
+- PTN installed and configured
+- Exchange API credentials
 
 ## Installation
 
-**Prerequisites**
-- **Node.js** (version 20+)
-- **npm** (Node Package Manager)
-
-### Steps
 1. Clone the repository
 ```bash
 git clone https://github.com/taoshidev/horizon.git
@@ -32,45 +69,90 @@ npm install
 ```
 
 3. Configure the project:
-- Update the `config.json` file with your API keys, secrets, and exchange settings.
-
-## Usage
-**Starting the Server**
-
-To start the server for bybit:
 ```bash
-npm run dev -- --exchange bybit
+cp config/default.json.example config/default.json
 ```
 
-**Watching Orders**
+4. Update configuration:
+
+```json
+{
+  "port": 8080,
+  "signal-server": "http://127.0.0.1:3005",
+  "ptn-path": "/path/to/your/ptn",
+  "exchange": "",
+  "[exchange-id]": {
+    "apiKey": "your-api-key",
+    "secret": "your-secret",
+    "market": "future",  // Optional
+    "password": "",      // If required by exchange
+    "demo": false
+  }
+}
+```
+
+## Usage
+### Development Mode
+
+Start both components:
+```bash
+npm run dev
+```
+
+**Start individually:**
+```bash
+# Watcher only
+node index.js --exchange [exchange-id]
+
+# Easy Miner only
+cd easy-miner && npm run dev
+```
 
 The application automatically starts watching orders on the configured exchanges and processes them into signals.
 
----
 
-## Key Components
+## Exchange Integration
 
-**Exchange Initialization**
-
-**File**: `modules/exchanges/index.js`
-
-Exchanges are dynamically loaded based on their ID. For example:
-- Bybit: Enables demo trading using enableDemoTrading.
-- OKX: Configures sandbox mode via set_sandbox_mode.
+1. Create exchange module (`/watcher/modules/exchanges/[exchange-id].js`):
 
 ```js
-import { getExchangeConfigModule } from "./modules/exchanges/index.js";
+export function transformOrder(order) {
+  return {
+    trade_pair: TradePair[formatSymbol(order)],
+    order_type: determineOrderType(order),
+  };
+}
 
-const exchange = await initializeExchange("bybit", {
-  apiKey: "your-api-key",
-  secret: "your-secret",
-  demo: true,
-});
+export function configureExchange(exchange, config) {
+  // Configure sandbox mode if supported
+  if (typeof exchange.set_sandbox_mode === "function") {
+    exchange.set_sandbox_mode(config.demo);
+  }
+
+  // Add any exchange-specific configuration
+}
+
+// Optional: Custom options for CCXT initialization
+export function getOptions() {
+  return {
+    defaultType: "future", // Or other CCXT options
+  };
+}
+```
+
+2. Add to exchange registry (`./watcher/modules/exchanges/index.js`):
+
+```js
+import * as customExchange from "./[exchange-id].js";
+
+const exchangeModules = {
+  [exchange-id]: customExchange,
+};
 ```
 
 **Signal Processing**
 
-**File**: `modules/orders/toSignal.js`
+**File**: `./watcher/modules/orders/toSignal.js`
 
 Converts orders and balances into signals:
 
@@ -86,71 +168,31 @@ export function toSignal({ id, order, balance }) {
 }
 ```
 
-**WebSocket Broadcasting**
 
-**File**: `modules/websocket/broadcast.js`
+### Production Mode
 
-Broadcasts signals to connected WebSocket clients:
-
-```js
-export function broadcast(wss, message) {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(message));
-    }
-  });
-}
+```bash
+npm run build
+npm start
 ```
 
-## Configuration
-**File**: `config.json`
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
 
-Update this file with your API credentials and exchange settings. For example:
-```json
-{
-  "port": 8080,
-  "signal-server": "http://127.0.0.1:3005",
-  "bybit": {
-    "apiKey": "your-bybit-api-key",
-    "secret": "your-bybit-secret",
-    "demo": true
-  },
-  "okx": {
-    "apiKey": "your-okx-api-key",
-    "secret": "your-okx-secret",
-    "password": "your-okx-password",
-    "demo": true
-  }
-}
-```
+Ensure your PR:
+- Includes tests
+- Updates documentation
+- Maintains code style
+- Has clear description
 
-## Adding New Exchanges
-1. Create a new module in `modules/exchanges` (e.g., mexc.js):
-```js
-export function configureExchange(exchange, { demo }) {
-  if (demo) {
-    console.log("Configuring MEXC in demo mode.");
-  }
-}
+## License
+MIT License
 
-export function getOptions() {
-  return { defaultType: "spot" };
-}
-```
+## Support
+- GitHub Issues
+- Discord: Join
+- Email: support@taoshi.io
 
-2.	Update the index.js file:
-```js
-import * as mexc from "./mexc.js";
-
-const exchangeModules = {
-  bybit,
-  okx,
-  mexc, // Add the new exchange here
-};
-
-export function getExchangeConfigModule(id) {
-  return exchangeModules[id] || null;
-}
-```
-
-3.	Use initializeExchange to initialize the new exchange.
+Built by Taoshi

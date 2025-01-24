@@ -9,10 +9,10 @@ import _ from "lodash";
 import { Command } from "commander";
 import config from "config";
 
-import { watchTower } from "./modules/app/index.js";
-import { startWebSocket } from "./modules/websocket/start.js";
-import { initializeRoutes } from "./routes/index.js";
-import { SupportedExchanges } from "./constants/index.js";
+import { watchTower } from "./watcher/modules/app/index.js";
+import { startWebSocket } from "./watcher/modules/websocket/start.js";
+import { initializeRoutes } from "./watcher/routes/index.js";
+import { SupportedExchanges } from "./watcher/constants/index.js";
 
 const app = express();
 Sentry.setupExpressErrorHandler(app);
@@ -20,21 +20,22 @@ Sentry.setupExpressErrorHandler(app);
 const server = createServer(app);
 const wss = startWebSocket(server);
 const program = new Command();
+
 const port = config.get("port");
+const exchange = config.get("exchange");
 
 app.use(express.json());
 app.use("/api", initializeRoutes(wss));
 
 program
-  .option("--exchange <string>", "specify the exchange to use", "")
+  .option("--exchange <string>", "specify the exchange to use", exchange)
   .option("--port <number>", "specify the port to use", port)
   .parse(process.argv);
 
 (async () => {
   try {
-    server.listen(options.port, () => {
+    server.listen(program.opts().port, () => {
       console.log(`Server running on http://localhost:${program.opts().port}`);
-      console.log(`WebSocket server running on ws://localhost:${options.port}`);
     });
 
     if (SupportedExchanges.includes(program.opts().exchange)) {

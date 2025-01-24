@@ -4,8 +4,11 @@
   "exports": "./index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "client:dev": "cd easy-miner && npx next dev",
+    "client:build": "cd easy-miner && npx next build",
+    "client:start": "cd easy-miner && npx next start",
+    "dev": "concurrently \"nodemon index.js\" \"npm run client:dev\"",
+    "start": "npm run client:build && node index.js && npm run client:start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -30,6 +33,7 @@
   "devDependencies": {
     "@types/config": "^3.3.5",
     "@types/express": "^5.0.0",
-    "@types/ws": "^8.5.13"
+    "@types/ws": "^8.5.13",
+    "concurrently": "^9.1.2"
   }
 }
