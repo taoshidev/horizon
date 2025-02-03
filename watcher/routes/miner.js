@@ -1,0 +1,43 @@
+import { startMiner } from "../modules/miner/start.js";
+import { startSignalServer } from "../modules/miner/signalServer/start.js";
+
+export const minerRoutes = (router, wss) => {
+  router.post("/start-miner", async (req, res) => {
+    const { testnet, wallet, debug, dashboard } = req.body;
+
+    try {
+      const output = await startMiner(wss, { testnet, wallet, debug, dashboard });
+      res.json({
+        status: "success",
+        message: "Miner started successfully",
+        output,
+      });
+    } catch (error) {
+      console.error("Error in start-miner route:", error.message);
+      res.status(500).json({
+        status: "error",
+        message: error.message || "Failed to start miner",
+      });
+    }
+  });
+
+  router.post("/start-server", async (_, res) => {
+    try {
+      const output = await startSignalServer(wss);
+      console.log("Starting server:", output);
+      res.json({
+        status: "success",
+        message: "Miner started successfully",
+        output,
+      });
+    } catch (error) {
+      console.error("Error in start-miner route:", error.message);
+      res.status(500).json({
+        status: "error",
+        message: error.message || "Failed to start miner",
+      });
+    }
+  });
+
+  return router;
+};
