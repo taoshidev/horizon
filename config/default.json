@@ -1,0 +1,12 @@
+{
+  "port": 8080,
+  "signal-server": "http://127.0.0.1:3005",
+  "ptn-path": "",
+  "exchange": "",
+  "bybit": {
+    "apiKey": "",
+    "secret": "",
+    "market": "",
+    "demo": false
+  }
+}
