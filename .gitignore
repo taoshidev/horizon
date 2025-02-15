@@ -16,6 +16,7 @@
 # production
 /build
 
+/config/default.json
 /config/development.json
 /config/production.json
 

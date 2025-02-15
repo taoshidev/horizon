@@ -64,6 +64,20 @@ git clone https://github.com/taoshidev/horizon.git
 cd horizon
 ```
 
+### Install script
+To install all dependencies and set up the environment, simply run:
+```bash
+./start.sh
+```
+You can proceed to step 4.
+
+### Manual Installation
+
+Add Easy Miner (optional):
+```bash
+git submodule update --init --remote --merge
+```
+
 2. Install Watcher:
 ```bash
 npm install
@@ -77,7 +91,7 @@ npm install
 
 4. Configure the project:
 ```bash
-cp config/default.json.example config/default.json
+cp config/default.example.json config/default.json
 ```
 
 5. Update configuration:
