@@ -2,3 +2,4 @@
 	path = easy-miner
 	url = https://github.com/taoshidev/easy-miner.git
 	branch = main
+	update = merge
