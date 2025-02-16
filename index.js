@@ -4,6 +4,7 @@ import "./instrument.js";
 
 import * as Sentry from "@sentry/node";
 import express from "express";
+import cors from "cors";
 import { createServer } from "http";
 import { Command } from "commander";
 import config from "config";
@@ -15,6 +16,10 @@ import { SupportedExchanges } from "./watcher/constants/index.js";
 
 const app = express();
 Sentry.setupExpressErrorHandler(app);
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+}));
 
 const server = createServer(app);
 const wss = startWebSocket(server);

@@ -3,7 +3,7 @@
   "signal-server": "http://127.0.0.1:3005",
   "ptn-path": "",
   "exchange": "",
-  "bybit": {
+  "[EXCHANGE_ID]": {
     "apiKey": "",
     "secret": "",
     "market": "",

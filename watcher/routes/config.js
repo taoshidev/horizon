@@ -35,33 +35,10 @@ export const configRoutes = (router, wss) => {
   });
 
   router.get("/get-config", async (req, res) => {
-    const db = await JSONFilePreset(configPath, config);
-    const { exchange } = req.query;
-
-    try {
-      if (exchange) {
-        const exchangeConfig = db.data[exchange];
-
-        if (!exchangeConfig) {
-          return res
-            .status(404)
-            .json({ error: `Configuration for ${exchange} not found` });
-        }
-
-        return res.status(200).json({
-          message: `Configuration for ${exchange} retrieved successfully`,
-          data: exchangeConfig,
-        });
-      }
-
-      return res.status(200).json({
-        message: "All configurations retrieved successfully",
-        data: db.data,
-      });
-    } catch (error) {
-      console.error("Error retrieving config file:", error);
-      return res.status(500).json({ error: "Failed to retrieve config file" });
-    }
+    return res.status(200).json({
+      message: `Configuration retrieved successfully`,
+      data: config.util.toObject(),
+    });
   });
 
   return router;

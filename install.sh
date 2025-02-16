@@ -7,6 +7,7 @@ git submodule update --init --remote --merge
 
 # Go into submodule and checkout main
 cd easy-miner
+cp .env.example .env
 
 npm install
 cd ..
